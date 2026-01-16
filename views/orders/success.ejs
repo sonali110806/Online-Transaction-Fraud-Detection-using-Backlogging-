@@ -1,0 +1,18 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+    
+      <p> " Order Placed Successfully "</p>
+      <br> <br>
+      <div class="product-detail">
+      <p>Order Id : <%=order._id %></p>
+      <p>Product Name: <%=order.productName %></p>
+      <p>Price: $<%= order.price %></p>
+      </div>
+      <br> <br>
+      <div class="payment-info">
+      <p>Selected Payment Method :<%=order.paymentMethod %></p>
+      <p>Order Status :<%= order.status %></p>
+      </div>    <br><br>
+      <a href = "/listings">Continue Shopping </a>
+
+</body>
