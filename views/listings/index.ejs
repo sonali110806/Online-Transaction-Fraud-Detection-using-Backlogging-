@@ -1,0 +1,22 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+    <h3>All Products</h3>
+     <ul>
+    <% for (let listing of allListings) { %>
+        <li>
+            <img src="<%= listing.image.url %>" width="200" height="200" />
+
+            <a href="/listings/<%= listing._id %>">
+                <%= listing.name %>
+            </a>
+
+            <div>
+                &#8377;
+                <%= listing.price 
+                    ? listing.price.toLocaleString("en-IN") 
+                    : "Price not available" %>
+            </div>
+        </li>
+    <% } %>
+</ul>
+</body>
