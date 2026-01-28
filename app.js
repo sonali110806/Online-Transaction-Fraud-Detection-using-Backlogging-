@@ -5,6 +5,12 @@ const Listing = require("./models/listing.js");
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const Order = require("./models/order.js");
+const FraudLog = require("./models/FraudLog.js");
+const fraudCheck = require("./utils/fraudEngine");
+const adminRoutes = require("./routes/adminAuth");
+const session = require("express-session");
+const authRoutes = require("./routes/auth");
+const { isUserLoggedIn } = require("./middleware/auth");
 
 const MONGO_URL = 'mongodb://127.0.0.1:27017/trustcart';
 
@@ -26,33 +32,37 @@ app.set("views" , path.join(__dirname , "views"));
 app.engine('ejs' , ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 app.use(express.urlencoded({ extended: true }));
-
+app.use("/admin", adminRoutes);
+app.use(express.static("public"));
+app.use( session({
+    secret: "trustcartsecret",
+    resave: false,
+    saveUninitialized: false
+  }));
+app.use("/", authRoutes);
+app.use("/admin", adminRoutes);
 
 app.get("/" , (req,res) => {
-    res.send("hi i am root");
+   res.render("home");
 });
 
-app.get("/listings" , async(req,res) => {
-   const allListings = await Listing.find({});
-   res.render("listings/index.ejs" , { allListings });
- });
+app.get("/listings", isUserLoggedIn, async (req, res) => {
+  const allListings = await Listing.find({});
+  res.render("listings/index.ejs", { allListings });
+});
+
  
 app.get("/listings/:id", async (req, res) => {
     let { id } = req.params;
-
-    // STEP 1: Remove the space immediately
     id = id.trim(); 
 
-    // STEP 2: Now check if the CLEAN id is valid
     if (!mongoose.Types.ObjectId.isValid(id)) {
         console.log(`Error: ID "${id}" is not valid`); // Debugging log
         return res.status(400).send("Invalid Listing ID");
     }
 
-    // STEP 3: Find the listing
     const listing = await Listing.findById(id);
     
-    // STEP 4: Handle if listing was deleted or doesn't exist
     if (!listing) {
         return res.status(404).send("Listing not found");
     }
@@ -68,8 +78,14 @@ app.get("/listings/:id/pay", async (req, res) => {
 
 // transaction trigger route
 app.post("/listings/:id/pay", async (req, res) => {
-    let { id } = req.params;
+    
+    try{
+        let { id } = req.params;
     const { fullName , phone , address , email ,paymentMethod } = req.body;
+
+    if (!fullName || !phone || !address || !paymentMethod) {
+       return res.status(400).send("All fields are required");
+   }
 
     const listing = await Listing.findById(id);
 
@@ -77,26 +93,69 @@ app.post("/listings/:id/pay", async (req, res) => {
         return res.status(404).send("Product not found");
     }
 
-    let status = "Pending";
-    if (paymentMethod === "COD") {
-        status = "confirmed";
+    const previousAttempts = await FraudLog.countDocuments({
+      phone,
+      createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
+    });
+
+    const recentOrders = await Order.countDocuments({
+      "customer.phone": phone,
+      createdAt: { $gte: new Date(Date.now() - 10 * 60 * 1000) }
+    });
+    console.log(" Starting fraud analysis");
+
+    // fraud engine call
+    const fraudResult = fraudCheck({
+        listing ,
+        paymentMethod,
+        recentOrders,
+        previousAttempts,email
+    });
+
+    const riskLevel = fraudResult.riskScore >= 80 ? "HIGH": fraudResult.riskScore >= 50 ? "MEDIUM":"LOW";
+
+    // Blocked
+    if(fraudResult.status === "BLOCKED" ){
+        await FraudLog.create({
+            userName : fullName,
+            phone,
+            email,
+            amount : listing.price,
+            reasons : fraudResult.reasons,
+            fraudScore : fraudResult.riskScore,
+            riskLevel,
+            status : "BLOCKED"
+        });
+        console.log(" BLOCKING TRANSACTION");
+
+        return res.render("orders/blocked", {
+        reasons: fraudResult.reasons
+        });
+
     }
 
-    const order = new Order({
-        productId : listing._id,
-        productName: listing.name,
-        price: listing.price,
-         paymentMethod ,
-          status,
-        customer: {
-            fullName ,
-            phone ,
-            address,
-            email,
-        } 
-    });
+    //Safe 
+    const order =  new Order({
+    product : listing._id,
+    productName : listing.name,
+    price : listing.price,
+    paymentMethod,
+    status : paymentMethod === "COD" ? "CONFIRMED" : "PENDING",
+    customer : {fullName , phone, address , email}
+});
+
+    console.log("Payment route hit");
     await order.save();
     res.redirect(`/orders/${order._id}/success`);
+
+    console.log("Price:", listing.price);
+    console.log("Payment Method:", paymentMethod);
+
+    
+} catch(err){
+    console.log(err);
+    res.status(500).send("Something went wrong");
+}
 });
 
 // order-success page
@@ -109,6 +168,25 @@ app.get("/orders/:id/success", async (req, res) => {
     }
     res.render("orders/success", { order });
 });
+
+
+//status page 
+app.get("/orders/:id" , async(req,res) => {
+    const order = await Order.findById(req.params.id);
+    if(!order) return res.status(404).send("ORder not found");
+    res.render("orders/show" , {order});
+});
+
+// for login page 
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
+
+
+
+
+
 
 
 // app.get("/testListing" , async(req , res) => {cs
@@ -128,3 +206,4 @@ app.get("/orders/:id/success", async (req, res) => {
 app.listen(8080 , () => {
     console.log("server is on 8080");
 });
+

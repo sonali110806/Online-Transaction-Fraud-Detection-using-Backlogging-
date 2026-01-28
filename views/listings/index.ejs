@@ -1,22 +1,32 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <h3>All Products</h3>
-     <ul>
-    <% for (let listing of allListings) { %>
-        <li>
-            <img src="<%= listing.image.url %>" width="200" height="200" />
 
-            <a href="/listings/<%= listing._id %>">
-                <%= listing.name %>
-            </a>
+<h3 class="page-title">All Products</h3>
 
-            <div>
-                &#8377;
-                <%= listing.price 
-                    ? listing.price.toLocaleString("en-IN") 
-                    : "Price not available" %>
-            </div>
-        </li>
-    <% } %>
-</ul>
-</body>
+<div class="listing-grid">
+  <% for (let listing of allListings) { %>
+    <div class="listing-card">
+      
+      <img 
+        src="<%= listing.image.url %>" 
+        alt="<%= listing.name %>"
+        class="listing-img"
+      />
+
+      <div class="listing-body">
+        <h5 class="listing-title"><%= listing.name %></h5>
+
+        <p class="listing-price">
+          &#8377;
+          <%= listing.price 
+            ? listing.price.toLocaleString("en-IN") 
+            : "Price not available" %>
+        </p>
+
+        <a href="/listings/<%= listing._id %>" class="btn btn-primary btn-sm">
+          View Details
+        </a>
+      </div>
+
+    </div>
+  <% } %>
+</div>

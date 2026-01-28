@@ -1,18 +1,39 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    
-      <p> " Order Placed Successfully "</p>
-      <br> <br>
-      <div class="product-detail">
-      <p>Order Id : <%=order._id %></p>
-      <p>Product Name: <%=order.productName %></p>
-      <p>Price: $<%= order.price %></p>
-      </div>
-      <br> <br>
-      <div class="payment-info">
-      <p>Selected Payment Method :<%=order.paymentMethod %></p>
-      <p>Order Status :<%= order.status %></p>
-      </div>    <br><br>
-      <a href = "/listings">Continue Shopping </a>
 
-</body>
+<div class="success-page">
+
+  <div class="success-card">
+
+    <div class="success-icon">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+
+    <h2 class="success-title">Order Placed Successfully</h2>
+    <p class="success-subtitle">
+      Thank you for shopping with Trustcart 
+    </p>
+
+    <div class="success-section">
+      <h5>Order Summary</h5>
+      <p><strong>Order ID:</strong> <%= order._id %></p>
+      <p><strong>Product Name:</strong> <%= order.productName %></p>
+      <p><strong>Price:</strong> ₹ <%= order.price.toLocaleString("en-IN") %></p>
+    </div>
+
+    <div class="success-section">
+      <h5>Payment Details</h5>
+      <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+
+      <p>
+        <strong>Status:</strong>
+        <span class="status confirmed"><%= order.status %></span>
+      </p>
+    </div>
+
+    <a href="/listings" class="btn btn-success mt-3">
+      Continue Shopping
+    </a>
+
+  </div>
+
+</div>

@@ -1,0 +1,49 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="order-page">
+
+  <h3 class="page-title">Order Details</h3>
+
+  <div class="order-card">
+
+    <!-- Order Summary -->
+    <div class="order-section">
+      <h5>Order Summary</h5>
+      <p><strong>Order ID:</strong> <%= order._id %></p>
+      <p><strong>Product Name:</strong> <%= order.productName %></p>
+      <p><strong>Price:</strong> ₹ <%= order.price.toLocaleString("en-IN") %></p>
+    </div>
+
+    <!-- Payment Info -->
+    <div class="order-section">
+      <h5>Payment Information</h5>
+      <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+
+      <p>
+        <strong>Status:</strong>
+        <% if(order.status === "CONFIRMED") { %>
+          <span class="status confirmed">CONFIRMED</span>
+        <% } else if(order.status === "PENDING") { %>
+          <span class="status pending">PENDING</span>
+        <% } else { %>
+          <span class="status blocked">BLOCKED</span>
+        <% } %>
+      </p>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="order-section">
+      <h5>Customer Details</h5>
+      <p><strong>Name:</strong> <%= order.customer.fullName %></p>
+      <p><strong>Address:</strong> <%= order.customer.address %></p>
+      <p><strong>Phone:</strong> <%= order.customer.phone %></p>
+      <p><strong>Email:</strong> <%= order.customer.email %></p>
+    </div>
+
+    <a href="/listings" class="btn btn-primary mt-3">
+      Continue Shopping
+    </a>
+
+  </div>
+
+</div>

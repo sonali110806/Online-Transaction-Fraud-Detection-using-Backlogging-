@@ -1,0 +1,30 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="blocked-page">
+
+  <div class="blocked-card">
+    <div class="blocked-icon">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+
+    <h1>Transaction Blocked</h1>
+
+    <p class="blocked-text">
+      Your order could not be processed due to security concerns.
+    </p>
+
+    <div class="blocked-reasons">
+      <h6>Reasons:</h6>
+      <ul>
+        <% reasons.forEach(function(reason) { %>
+          <li><%= reason %></li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <a href="/listings" class="btn btn-danger">
+      Go Back to Listings
+    </a>
+  </div>
+
+</div>

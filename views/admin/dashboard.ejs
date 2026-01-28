@@ -1,0 +1,55 @@
+<% layout("/layouts/boilerplate") %>
+
+<h2>Fraud Detection Dashboard</h2>
+
+<div class="card">
+  <h6>Total Blocked Transactions: <%= totalBlocked %></h6>
+  <h6>High Risk Cases: <%= highRisk %></h6>
+</div>
+
+<div class="card">
+  <h4>Fraud Logs</h4>
+  <table>
+    <tr>
+      <th>User</th>
+      <th>Amount</th>
+      <th>Score</th>
+      <th>Risk</th>
+      <th>Reasons</th>
+      <th>Date</th>
+    </tr>
+
+    <% logs.forEach(log => { %>
+      <tr>
+        <td>
+          <%= log.userName %><br>
+          <small><%= log.phone %></small>
+        </td>
+
+        <td>₹ <%= log.amount %></td>
+
+        <td><%= log.fraudScore %></td>
+
+        <td>
+          <% if (log.riskLevel === "HIGH") { %>
+            <span class="badge high">HIGH</span>
+          <% } else if (log.riskLevel === "MEDIUM") { %>
+            <span class="badge medium">MEDIUM</span>
+          <% } else { %>
+            <span class="badge low">LOW</span>
+          <% } %>
+        </td>
+
+        <td>
+          <ul>
+            <% log.reasons.forEach(r => { %>
+              <li><%= r %></li>
+            <% }) %>
+          </ul>
+        </td>
+
+        <td><%= log.createdAt.toDateString() %></td>
+      </tr>
+    <% }) %>
+  </table>
+</div>

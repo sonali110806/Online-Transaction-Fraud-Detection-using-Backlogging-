@@ -1,40 +1,75 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <h3>Product Summary </h3>
-    <form action="/listings/<%= listing._id %>/pay" method="POST">
-    <p class = "product-summary">
-    <p>
-        <img src="<%= listing.image.url %>" alt="Product Image" width="200" height="200">
+
+<h3 class="page-title">Checkout</h3>
+
+<form 
+  action="/listings/<%= listing._id %>/pay" 
+  method="POST" 
+  class="checkout-grid"
+>
+
+  <!-- LEFT: Product Summary -->
+  <div class="checkout-card">
+    <h4 class="card-title">Product Summary</h4>
+
+    <div class="product-summary">
+      <img 
+        src="<%= listing.image.url %>" 
+        alt="Product Image" 
+        class="product-img"
+      />
+
+      <div class="product-info">
+        <p><strong><%= listing.name %></strong></p>
+        <p>Quantity: 1</p>
+        <p class="price">
+          &#8377; <%= listing.price.toLocaleString("en-IN") %>
+        </p>
+      </div>
+    </div>
+
+    <hr>
+
+    <p class="total">
+      Total Amount:
+      <span>&#8377; <%= listing.price.toLocaleString("en-IN") %></span>
     </p>
-    <p>Product Name: <%= listing.name %></p>
-    <p>Price: $<%= listing.price %></p>
-    <p>Quantity: 1</p>
-    <p>Total Amount : &#8377; <%= listing.price.toLocaleString("en-IN")%></p>
-</p>
-<br> <br> <br>
- <div class="user-info">
-     <h4>Customer Details</h4>  
-    <input type="text" name="fullName" placeholder="Full Name" required><br>
-    <input type="text" name="phone" placeholder="Phone Number" required><br>
-    <textarea type="text" name="address" placeholder="Address" required ></textarea>  <br>
-    <input type = "text" name="email" placeholder = "email-id" required> <br>
- </div>
- <p>
-     <h4>Payment Method</h4>
+  </div>
 
-  <input type="radio" name="paymentMethod" value="COD" required>
-  <label>Cash on Delivery</label><br><br>
+  <!-- RIGHT: Customer + Payment -->
+  <div class="checkout-card">
+    <h4 class="card-title">Customer Details</h4>
 
-  <input type="radio" name="paymentMethod" value="UPI">
-  <label>UPI</label><br><br>
+    <input type="text" name="fullName" placeholder="Full Name" required>
+    <input type="text" name="phone" placeholder="Phone Number" required>
+    <textarea name="address" placeholder="Delivery Address" required></textarea>
+    <input type="email" name="email" placeholder="Email Address" required>
 
-  <input type="radio" name="paymentMethod" value="CARD">
-  <label>Debit / Credit Card</label><br><br>
+    <h4 class="card-title mt">Payment Method</h4>
 
-  <input type="radio" name="paymentMethod" value="NET_BANKING">
-  <label>Net Banking</label><br><br>
+    <div class="payment-option">
+      <input type="radio" name="paymentMethod" value="COD" required>
+      <label>Cash on Delivery</label>
+    </div>
 
-  <button type="submit">Confirm & Pay</button>
- </p>
- </form>
-</body>
+    <div class="payment-option">
+      <input type="radio" name="paymentMethod" value="UPI">
+      <label>UPI</label>
+    </div>
+
+    <div class="payment-option">
+      <input type="radio" name="paymentMethod" value="CARD">
+      <label>Debit / Credit Card</label>
+    </div>
+
+    <div class="payment-option">
+      <input type="radio" name="paymentMethod" value="NET_BANKING">
+      <label>Net Banking</label>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100 mt">
+      Confirm & Pay
+    </button>
+  </div>
+
+</form>

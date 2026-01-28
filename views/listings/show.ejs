@@ -1,19 +1,44 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <h3> Product Details</h3>
-    <img src="<%= listing.image.url %>" width="200" height="200" />
-    <br>
-    <%=listing.name %> <br>
-    <%= listing.description %>   <br>
-    <%= listing.type %> <br> 
-    &#8377; <%= listing.price.toLocaleString("en-IN")%><br/>
-    <%= listing.category %>
-    <%= listing.availability %>
-    
-    <br> <br> <br> 
-<div class="btns">
-    <button type = "submit"> Add to cart </button>
-    <a href = "/listings/<%= listing._id %>/pay" >
-        <button> Buy Now </button></a>
+
+<div class="product-page">
+
+  <!-- Image -->
+  <div class="product-image">
+    <img 
+      src="<%= listing.image.url %>" 
+      alt="<%= listing.name %>"
+    />
+  </div>
+
+  <!-- Details -->
+  <div class="product-details">
+    <h2><%= listing.name %></h2>
+
+    <p class="description">
+      <%= listing.description %>
+    </p>
+
+    <div class="meta">
+      <span>Type: <%= listing.type %></span>
+      <span>Category: <%= listing.category %></span>
+      <span>Status: <%= listing.availability %></span>
+    </div>
+
+    <h3 class="price">
+      &#8377; <%= listing.price.toLocaleString("en-IN") %>
+    </h3>
+
+    <div class="action-buttons">
+      <button class="btn btn-outline-primary">
+        Add to Cart
+      </button>
+
+      <a href="/listings/<%= listing._id %>/pay">
+        <button class="btn btn-success">
+          Buy Now
+        </button>
+      </a>
+    </div>
+  </div>
+
 </div>
-</body>
