@@ -173,7 +173,7 @@ app.get("/orders/:id/success", async (req, res) => {
 //status page 
 app.get("/orders/:id" , async(req,res) => {
     const order = await Order.findById(req.params.id);
-    if(!order) return res.status(404).send("ORder not found");
+    if(!order) return res.status(404).send("Order not found");
     res.render("orders/show" , {order});
 });
 
