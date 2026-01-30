@@ -22,6 +22,12 @@ const fraudLogSchema = new mongoose.Schema(
       type: String
     },
 
+    amount: {
+    type: Number,
+     required: true
+   },
+
+
     reasons: {
       type: [String],
       required: true

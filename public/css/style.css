@@ -397,12 +397,21 @@ body {
 }
 
 /* Payment options */
+.payment-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
 .payment-option {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 10px;
+  font-size: 15px;
 }
+
 
 /* Mobile */
 @media (max-width: 768px) {

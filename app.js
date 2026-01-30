@@ -1,14 +1,15 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
 const path = require("path");
 const ejsMate = require("ejs-mate");
+const session = require("express-session");
+
+const Listing = require("./models/listing.js");
 const Order = require("./models/order.js");
 const FraudLog = require("./models/FraudLog.js");
 const fraudCheck = require("./utils/fraudEngine");
-const adminRoutes = require("./routes/adminAuth");
-const session = require("express-session");
+const adminRoutes = require("./routes/admin");
 const authRoutes = require("./routes/auth");
 const { isUserLoggedIn } = require("./middleware/auth");
 
@@ -32,15 +33,20 @@ app.set("views" , path.join(__dirname , "views"));
 app.engine('ejs' , ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 app.use(express.urlencoded({ extended: true }));
-app.use("/admin", adminRoutes);
-app.use(express.static("public"));
-app.use( session({
-    secret: "trustcartsecret",
+app.use( 
+    session({
+    secret: "trustcart_secret_key",
     resave: false,
     saveUninitialized: false
   }));
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
 app.use("/", authRoutes);
 app.use("/admin", adminRoutes);
+app.use(express.static("public"));
+
 
 app.get("/" , (req,res) => {
    res.render("home");

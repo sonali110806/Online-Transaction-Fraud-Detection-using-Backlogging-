@@ -26,7 +26,8 @@
           <small><%= log.phone %></small>
         </td>
 
-        <td>₹ <%= log.amount %></td>
+        <td>₹ <%= log.amount?.toLocaleString("en-IN") %></td>
+
 
         <td><%= log.fraudScore %></td>
 

@@ -3,6 +3,23 @@ const router = express.Router();
 const FraudLog = require("../models/FraudLog");
 const { isAdminLoggedIn } = require("../middleware/auth");
 
+router.get("/login", (req, res) => {
+    res.render("admin/login");
+});
+
+router.post("/login", (req, res) => {
+    const { email, password } = req.body;
+    console.log(req.body); //
+
+    // TEMP check (we'll improve later)
+    if (email === "admin@gmail.com" && password === "admin123") {
+       req.session.admin = true;   
+        return res.redirect("/admin/dashboard");
+    }
+
+    return res.send("Invalid admin credentials");
+});
+
 router.get("/dashboard",isAdminLoggedIn, async (req, res) => {
   try {
     const totalBlocked = await FraudLog.countDocuments({
@@ -30,4 +47,11 @@ router.get("/dashboard",isAdminLoggedIn, async (req, res) => {
   }
 });
 
+router.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/admin/login");
+});
+
+
 module.exports = router;
+
