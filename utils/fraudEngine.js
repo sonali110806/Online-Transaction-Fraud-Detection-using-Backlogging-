@@ -13,7 +13,7 @@ module.exports = function fraudCheck({
     riskScore += 50;
   }
 
-  if (paymentMethod === "COD" && listing.price > 20000) {
+  if (paymentMethod === "COD" && listing.price > 2000) {
     reasons.push("COD on high-value product");
     riskScore += 30;
   }
